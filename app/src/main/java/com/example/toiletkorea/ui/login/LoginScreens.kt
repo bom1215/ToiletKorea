@@ -1,5 +1,6 @@
 package com.example.toiletkorea.ui.login
 
+import SignUpPage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.toiletkorea.R
 import com.example.toiletkorea.ToiletScreen
 import com.example.toiletkorea.ui.theme.ToiletKoreaTheme
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,6 +38,7 @@ import com.example.toiletkorea.ui.theme.ToiletKoreaTheme
 fun LoginMainPage (
     modifier: Modifier = Modifier,
     onNextButtonClicked : (Any?) -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     Column (
         modifier = Modifier
@@ -83,10 +86,11 @@ fun LoginMainPage (
 fun LoginPage(
     modifier: Modifier = Modifier,
     onNextButtonClicked: (Any?) -> Unit,
-
+    viewModel: LoginViewModel = hiltViewModel()
     ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+
+    val uiState by viewModel.uiState
+
     Column(
         modifier = modifier
             .fillMaxSize(),
@@ -102,18 +106,20 @@ fun LoginPage(
         Spacer(modifier = Modifier.size(30.dp))
 
         TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") }
+            value = uiState.email,
+            onValueChange = { viewModel.onEmailChange(it) },
+            maxLines = 1,
+            label = { Text("email") }
         )
         TextField(
-            value = password,
-            onValueChange = { password = it },
+            value = uiState.password,
+            onValueChange = { viewModel.onPasswordChange(it) },
+            maxLines = 1,
             label = { Text("Password") }
         )
         Spacer(modifier = Modifier.size(30.dp))
 
-        Button(onClick = {onNextButtonClicked(ToiletScreen.Login.name)},
+        Button(onClick = {viewModel.onSignInClick(onNextButtonClicked)},
             modifier = Modifier.size(width = 150.dp, height = 50.dp)
         ) {
             Text("Login",
@@ -123,60 +129,6 @@ fun LoginPage(
     }
 
     }
-
-@Composable
-fun SignUpPage(
-    modifier: Modifier = Modifier,
-    onNextButtonClicked: (Any?) -> Unit,
-
-) {
-    Column (
-        modifier = modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-
-        var username by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var EmailAddress by remember { mutableStateOf("") }
-
-        Text(text = "Sign Up",
-            style = MaterialTheme.typography.displayLarge)
-        Spacer(modifier = Modifier.size(30.dp))
-
-        TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
-            modifier = Modifier.padding(20.dp)
-        )
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier.padding(20.dp)
-        )
-        TextField(
-            value = EmailAddress,
-            onValueChange = { EmailAddress = it },
-            label = { Text("Email Address") },
-            maxLines = 2,
-            modifier = Modifier.padding(20.dp)
-        )
-        Spacer(modifier = Modifier.size(30.dp))
-
-        Button(onClick = {onNextButtonClicked(ToiletScreen.Map.name)},
-            modifier = Modifier.size(width = 150.dp, height = 50.dp)
-        ) {
-            Text("Sign Up",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold)
-        }
-
-    }
-
-}
 
 
 
@@ -192,13 +144,13 @@ fun LoginMainPagePreview(){
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginPagePreview() {
-    ToiletKoreaTheme {
-        LoginPage {}
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginPagePreview() {
+//    ToiletKoreaTheme {
+//        LoginPage {}
+//    }
+//}
 
 @Preview(showBackground = true)
 @Composable
