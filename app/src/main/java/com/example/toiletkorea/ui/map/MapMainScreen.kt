@@ -17,7 +17,6 @@ import java.lang.RuntimeException
 
 @Composable
 fun MapMainScreen(
-    activity: MainActivity,
     mapViewModel: MapViewModel = viewModel()) {
 
     val mapUiState by mapViewModel.uiState.collectAsState()
@@ -27,7 +26,4 @@ fun MapMainScreen(
         Column (modifier = Modifier.padding(it)) {
             Log.d(TAG, "구글맵 작동 시작.")
             GoogleMapScreen()
-        }
-
-    }
-}
+}}}
