@@ -1,27 +1,25 @@
 package com.example.toiletkorea
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
-import com.example.toiletkorea.data.jsonToDataClass
-import com.example.toiletkorea.data.read
-import com.example.toiletkorea.data.readToiletInfoFromDB
-import com.example.toiletkorea.data.write
 import com.example.toiletkorea.ui.theme.ToiletKoreaTheme
+import dagger.hilt.android.AndroidEntryPoint
 
 
 public val TAG : String = "MainActivity"
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +31,11 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ToiletKoreaApp()
-                    val context = LocalContext.current
-                    val filePath = context.filesDir
+//                    val Intent = Intent(this, EmailPasswordActivity::class.java)
+//                    startActivity(Intent)
+
+//                    val context = LocalContext.current
+//                    val filePath = context.filesDir
 //                    basicReadWrite(filePath)
 //                    practice(filePath)
 //                    read()
@@ -43,8 +44,8 @@ class MainActivity : ComponentActivity() {
 //                    readToiletInfoFromDB(latitude = 37.528643684, longitude = 127.126365737)
 
                 }
+            }
         }
-    }
     }
     internal fun areLocationPermissionsAlreadyGranted(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -64,8 +65,6 @@ class MainActivity : ComponentActivity() {
         else if (shouldShowPermissionRationale) "Rejected"  //거절
         else "Denied" // 회피
     }
-}
 
-
-
+    }
 
