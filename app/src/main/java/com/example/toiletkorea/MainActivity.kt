@@ -65,6 +65,17 @@ class MainActivity : ComponentActivity() {
         else if (shouldShowPermissionRationale) "Rejected"  //거절
         else "Denied" // 회피
     }
-
+    internal fun moveToAnotherMapAPP(newAddress : String){
+        val location = Uri.parse("geo:0,0?q=$newAddress")
+        val mapIntent = Intent(Intent.ACTION_VIEW, location)
+// Try to invoke the intent.
+        try {
+            Log.d(TAG, "지도 앱 실행")
+            startActivity(mapIntent)
+        } catch (e: ActivityNotFoundException) {
+            Log.d(TAG, "ActivityNotFoundException: $e")
+            // Define what your app should do if no activity can handle the intent.
+        }
     }
+}
 
