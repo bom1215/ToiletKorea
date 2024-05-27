@@ -16,8 +16,10 @@ limitations under the License.
 
 package com.example.makeitso.screens.sign_up
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import com.example.toiletkorea.TAG
 import com.example.toiletkorea.ToiletScreen
 import com.example.toiletkorea.R.string as AppText
 import com.example.toiletkorea.model.ext.isValidEmail
@@ -56,28 +58,36 @@ class SignUpViewModel @Inject constructor(
   }
 
 //  fun onSignUpClick(openAndPopUp: (String, String) -> Unit) {
-fun onSignUpClick(onNextButtonClicked: (Any?) -> Unit) {
+    fun onSignUpClick(onNextButtonClicked: (Any?) -> Unit) {
 
-    if (!email.isValidEmail()) {
-      SnackbarManager.showMessage(AppText.email_error)
-      return
-    }
+        if (!email.isValidEmail()) {
+          SnackbarManager.showMessage(AppText.email_error)
+          return
+        }
 
-    if (!password.isValidPassword()) {
-      SnackbarManager.showMessage(AppText.password_error)
-      return
-    }
+        if (!password.isValidPassword()) {
+          SnackbarManager.showMessage(AppText.password_error)
+          return
+        }
 
-    if (!password.passwordMatches(uiState.value.repeatPassword)) {
-      SnackbarManager.showMessage(AppText.password_match_error)
-      return
-    }
+        if (!password.passwordMatches(uiState.value.repeatPassword)) {
+          SnackbarManager.showMessage(AppText.password_match_error)
+          return
+        }
 
-    launchCatching {
-      accountService.linkAccount(email, password)
-//      openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
-          onNextButtonClicked(ToiletScreen.Login.name)
+        launchCatching {
+            try {
+                Log.d(TAG, "email: $email", )
+                Log.d(TAG, "password: $password", )
 
-    }
-  }
+                accountService.creatAccount(email, password)
+    //      openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
+                onNextButtonClicked(ToiletScreen.Login.name)
+            }catch (e: Exception){
+                Log.d(TAG, "Sign Up error", e)
+            }
+
+
+        }
+      }
 }
