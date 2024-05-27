@@ -48,6 +48,12 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
         val credential = EmailAuthProvider.getCredential(email, password)
         auth.currentUser!!.linkWithCredential(credential).await()
     }
+
+    override suspend fun creatAccount(email: String, password: String) {
+        if (!hasUser){
+            auth.createUserWithEmailAndPassword(email, password)
+        }
+    }
     override suspend fun deleteAccount() {
         auth.currentUser!!.delete().await()
     }
@@ -57,7 +63,7 @@ class AccountServiceImpl @Inject constructor(private val auth: FirebaseAuth) : A
         }
         auth.signOut()
 
-        createAnonymousAccount()
+//        createAnonymousAccount()
     }
 
     companion object {
