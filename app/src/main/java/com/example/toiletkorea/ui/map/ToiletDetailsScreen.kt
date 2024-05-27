@@ -38,57 +38,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.launch
 
 
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun ToiletTopBar(
-    drawerState: DrawerState,
 
-    ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val scope = rememberCoroutineScope()
-
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary),
-        title = {},
-        navigationIcon = {
-            IconButton(onClick = {
-                scope.launch {
-                    drawerState.apply {
-                        if (isClosed) open() else close()
-                    }
-                }
-            }) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Localized description"
-                )
-            }
-        },
-        scrollBehavior = scrollBehavior
-    )
-}
-
-@Composable
-fun SidebarInfo(){
-    ModalDrawerSheet {
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "name")
-        }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Main Page")
-        }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Your Favorites")
-        }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Your Reviews")
-        }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "Notices")
-        } }
-}
 
 @Composable
 fun ToiletDetails (
