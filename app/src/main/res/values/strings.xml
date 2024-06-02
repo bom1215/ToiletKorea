@@ -18,15 +18,26 @@
     <string name="try_again">Try again</string>
     <string name="ok">OK</string>
 
+    <!-- LoginMainScreen -->
+    <string name="login_main_title">Welcome!</string>
+    <string name="login_main_subtitle">Let us take care of your urgency</string>
+    <string name="login_as_a_guest">Continue as a guest</string>
+
+
     <!-- LoginScreen -->
-    <string name="sign_in">Sign in</string>
+    <string name="login">Login</string>
     <string name="login_details">Enter your login details</string>
     <string name="forgot_password">Forgot password? Click to get recovery email</string>
     <string name="recovery_email_sent">Check your inbox for the recovery email.</string>
     <string name="empty_password_error">Password cannot be empty.</string>
 
     <!-- SignUpScreen -->
+    <string name="signup">Sign Up</string>
     <string name="create_account">Create account</string>
     <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
     <string name="password_match_error">Passwords do not match.</string>
+
+    <!-- Google Login -->
+    <string name="web_client_id">154384776132-j34kldl2490jemq8bd14q7r95ppngldu.apps.googleusercontent.com</string>
+
 </resources>
