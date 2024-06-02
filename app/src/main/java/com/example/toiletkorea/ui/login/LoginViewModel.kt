@@ -1,15 +1,26 @@
 package com.example.toiletkorea.ui.login
 
+import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.content.IntentSender
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.toiletkorea.TAG
 import com.example.toiletkorea.ToiletScreen
 import com.example.toiletkorea.model.service.AccountService
 import com.example.toiletkorea.model.ext.isValidEmail
 import com.example.toiletkorea.ui.ToiletKoreaViewModel
 import com.example.toiletkorea.model.snackbar.SnackbarManager
+import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.toiletkorea.R.string as AppText
 
@@ -77,6 +88,32 @@ class LoginViewModel @Inject constructor(
             accountService.sendRecoveryEmail(email)
             SnackbarManager.showMessage(AppText.recovery_email_sent)
         }
+    }
+
+    fun signInAnonymously(navController: NavController){
+        launchCatching(snackbar = false) {
+            try {
+                accountService.createAnonymousAccount()
+            } catch (ex: FirebaseAuthException) {
+                throw ex
+            }
+        }
+        navController.navigate(ToiletScreen.Map.name)
+    }
+
+
+
+// launcher를 사용하여 구글 로그인을 처리하는 메서드
+    fun handleGoogleSignInResult(resultCode: Int, data: Intent) {
+        if (resultCode == Activity.RESULT_OK) {
+            viewModelScope.launch {
+                val signInResult = accountService.googleSignInWithIntent(intent = data)
+            }
+        }
+    }
+
+    suspend fun googleSignIn(): IntentSender? {
+        return accountService.googleSignIn()
     }
 }
 
