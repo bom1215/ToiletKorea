@@ -17,42 +17,85 @@ val Montserrat = FontFamily(
     Font(R.font.montserrat_bold, FontWeight.Bold),
     Font(R.font.montserrat_regular)
 )
+val abeezee = FontFamily(Font(R.font.abeezee_regular))
+
+
+
 // Set of Material typography styles to start with
+
 val Typography = Typography(
     displayLarge = TextStyle(
-        fontFamily = AbrilFatface,
+        fontFamily = abeezee,
         fontWeight = FontWeight.Normal,
-        fontSize = 36.sp,
+        fontSize = 24.sp
     ),
     displayMedium = TextStyle(
-        fontFamily = Montserrat,
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
+        fontFamily = abeezee,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp
     ),
-    labelSmall = TextStyle(
-        fontFamily = Montserrat,
-        fontWeight = FontWeight.Bold,
-        fontSize = 14.sp,
+    displaySmall = TextStyle(
+        fontFamily = abeezee,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
     ),
     bodyLarge = TextStyle(
-        fontFamily = Montserrat,
-        fontWeight = FontWeight.Bold,
-        fontSize = 14.sp
+        fontFamily = abeezee,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
     ),
     bodyMedium = TextStyle(
-        fontFamily = Montserrat,
+        fontFamily = abeezee,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        lineHeight = 20.sp
+        fontSize = 13.sp,
     ),
     bodySmall = TextStyle(
-        fontFamily = Montserrat,
-        fontWeight = FontWeight.Light,
-        fontSize = 10.sp,
-        lineHeight = 18.sp
+        fontFamily = abeezee,
+        fontWeight = FontWeight.Normal,
+        fontSize = 11.sp,
+    ),
+    labelLarge = TextStyle(
+        fontFamily = abeezee,
+        fontWeight = FontWeight.Normal,
+        fontSize = 15.sp
     )
 
 )
+//val Typography = Typography(
+//    displayLarge = TextStyle(
+//        fontFamily = AbrilFatface,
+//        fontWeight = FontWeight.Normal,
+//        fontSize = 36.sp,
+//    ),
+//    displayMedium = TextStyle(
+//        fontFamily = Montserrat,
+//        fontWeight = FontWeight.Bold,
+//        fontSize = 20.sp
+//    ),
+//    labelSmall = TextStyle(
+//        fontFamily = Montserrat,
+//        fontWeight = FontWeight.Bold,
+//        fontSize = 14.sp,
+//    ),
+//    bodyLarge = TextStyle(
+//        fontFamily = Montserrat,
+//        fontWeight = FontWeight.Bold,
+//        fontSize = 14.sp
+//    ),
+//    bodyMedium = TextStyle(
+//        fontFamily = Montserrat,
+//        fontWeight = FontWeight.Normal,
+//        fontSize = 12.sp,
+//        lineHeight = 20.sp
+//    ),
+//    bodySmall = TextStyle(
+//        fontFamily = Montserrat,
+//        fontWeight = FontWeight.Light,
+//        fontSize = 10.sp,
+//        lineHeight = 18.sp
+//    )
+//
+//)
 
 //displayLarge	Roboto 57/64
 //displayMedium	Roboto 45/52
