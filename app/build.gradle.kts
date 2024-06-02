@@ -93,8 +93,9 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.android.libraries.places:places:3.4.0")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
-
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
 
 
 
