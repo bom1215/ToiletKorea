@@ -32,9 +32,9 @@ import com.example.toiletkorea.ui.map.LocationPermissionRequest
 import com.example.toiletkorea.ui.login.LoginMainPage
 import com.example.toiletkorea.ui.login.LoginPage
 import com.example.toiletkorea.ui.map.MapMainScreen
-import com.example.toiletkorea.ui.map.SidebarInfo
-import com.example.toiletkorea.ui.map.ToiletTopBar
 import com.example.toiletkorea.model.snackbar.SnackbarManager
+import com.example.toiletkorea.ui.bars.SidebarInfo
+import com.example.toiletkorea.ui.bars.ToiletTopBar
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -65,9 +65,10 @@ fun ToiletKoreaApp (
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            SidebarInfo()
+            SidebarInfo(
+                navController = navController
+            )
         }
-
     ) {
         Scaffold(
             snackbarHost = {
@@ -98,12 +99,7 @@ fun ToiletKoreaApp (
                     .padding()
             ) {
                 composable(route = ToiletScreen.LoginMain.name) {
-                    LoginMainPage(onNextButtonClicked = { destination ->
-                        when (destination) {
-                            ToiletScreen.Login.name -> navController.navigate(ToiletScreen.Login.name)
-                            ToiletScreen.SignUp.name -> navController.navigate(ToiletScreen.SignUp.name)
-                        }
-                    })
+                    LoginMainPage(navController = navController)
                 }
                 composable(route = ToiletScreen.Login.name) {
                     LoginPage (onNextButtonClicked = { destination ->
