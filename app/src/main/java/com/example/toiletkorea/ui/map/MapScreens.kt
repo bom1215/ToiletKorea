@@ -244,7 +244,7 @@ fun LocationPermissionRequest(
     }
     else if(locationPermissionsGranted){
         Log.d(TAG, "다음 화면 전환")
-        navController.navigate(ToiletScreen.Map.name)
+        navController.navigate(ToiletScreen.Login.name)
     }
 
 }
@@ -252,7 +252,6 @@ fun LocationPermissionRequest(
 @Composable
 fun ShowPermissionRationale(
 ){
-    val TAG = "MainActivity"
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     Log.d(TAG, "showPermissionRationale 시작")
@@ -269,7 +268,7 @@ fun ShowPermissionRationale(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painterResource(id = R.drawable.poopimage),
+            painterResource(id = R.drawable.main_logo),
             contentDescription = null
         )
     }
