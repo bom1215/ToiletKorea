@@ -7,6 +7,7 @@ import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.android.play.integrity.internal.i
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
@@ -20,8 +21,8 @@ import kotlin.coroutines.resumeWithException
 fun write(context: Context){
     val db = Firebase.firestore
     val toiletInfoMap = jsonToDataClass(context)
-    for (i in 0..1000){
-        db.collection("Seoul").document(i.toString()).set(toiletInfoMap[i.toString()]!!)
+    toiletInfoMap.forEach{(key, toiletInfo) ->
+        db.collection("Seoul").document(key).set(toiletInfoMap[key]!!)
             .addOnSuccessListener {
                 Log.d(TAG, "데이터 추가 성공")
             }
@@ -29,15 +30,6 @@ fun write(context: Context){
                 Log.d(TAG, "데이터 추가 실패", exception)
             }
     }
-//    toiletInfoMap.forEach{(key, toiletInfo) ->
-//        db.collection("Seoul").document(key).set(toiletInfoMap[key]!!)
-//            .addOnSuccessListener {
-//                Log.d(TAG, "데이터 추가 성공")
-//            }
-//            .addOnFailureListener{ exception ->
-//                Log.d(TAG, "데이터 추가 실패", exception)
-//            }
-//    }
 
 }
 
