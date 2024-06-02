@@ -98,7 +98,7 @@ fun SidebarInfo(
                 style = MaterialTheme.typography.labelSmall)
         }
         TextButton(onClick = {
-//            viewModel.onSignOutClick()
+            viewModel.onSignOutClick()
         }) {
             Icon(
                 painter = painterResource(R.drawable.logout),
