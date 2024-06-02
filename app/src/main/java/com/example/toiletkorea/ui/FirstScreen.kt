@@ -2,11 +2,13 @@ package com.example.toiletkorea.ui
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +35,8 @@ fun FirstScreen(
     Scaffold{Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(it),
+            .padding(it)
+            .background(color = MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -41,14 +44,13 @@ fun FirstScreen(
             painterResource(id = R.drawable.main_logo),
             contentDescription = null,
             contentScale = ContentScale.Fit,
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(170.dp)
         )
     }}
     if (activity.areLocationPermissionsAlreadyGranted()){
         LaunchedEffect(Unit) {
             delay(3000)
             Log.d(TAG, "로그인 화면 전환")
-//            navController.navigate(ToiletScreen.Map.name)
             navController.navigate(ToiletScreen.LoginMain.name)
         }
     }
