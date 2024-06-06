@@ -40,10 +40,17 @@ class SignUpViewModel @Inject constructor(
     private val _uiState = mutableStateOf(SignUpUiState())
     val uiState: State<SignUpUiState> = _uiState
 
-  private val email
-    get() = uiState.value.email
-  private val password
-    get() = uiState.value.password
+    private val username
+        get() = uiState.value.username
+    private val email
+        get() = uiState.value.email
+    private val password
+        get() = uiState.value.password
+
+
+    fun onUsernameChange(newValue: String){
+        _uiState.value = _uiState.value.copy(username = newValue)
+    }
 
   fun onEmailChange(newValue: String) {
       _uiState.value = _uiState.value.copy(email = newValue)
@@ -80,7 +87,7 @@ class SignUpViewModel @Inject constructor(
                 Log.d(TAG, "email: $email", )
                 Log.d(TAG, "password: $password", )
 
-                accountService.creatAccount(email, password)
+                accountService.createAccount(email, password)
     //      openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
                 onNextButtonClicked(ToiletScreen.Login.name)
             }catch (e: Exception){
