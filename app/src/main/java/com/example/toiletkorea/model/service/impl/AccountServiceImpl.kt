@@ -65,7 +65,7 @@ class AccountServiceImpl @Inject constructor(
         auth.currentUser!!.linkWithCredential(credential).await()
     }
 
-    override suspend fun creatAccount(email: String, password: String) {
+    override suspend fun createAccount(email: String, password: String) {
         if (!hasUser){
             auth.createUserWithEmailAndPassword(email, password)
         }

@@ -23,7 +23,7 @@ interface AccountService {
     suspend fun sendRecoveryEmail(email: String)
     suspend fun createAnonymousAccount()
     suspend fun linkAccount(email: String, password: String)
-    suspend fun creatAccount(email: String, password: String)
+    suspend fun createAccount(email: String, password: String)
     suspend fun deleteAccount()
     suspend fun signOut()
 
