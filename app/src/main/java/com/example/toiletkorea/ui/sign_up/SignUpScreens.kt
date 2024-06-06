@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,7 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.makeitso.screens.sign_up.SignUpViewModel
-import com.example.toiletkorea.ToiletScreen
+import com.example.toiletkorea.R
+import com.example.toiletkorea.ui.composable.EmailField
+import com.example.toiletkorea.ui.composable.GeneralTextField
+import com.example.toiletkorea.ui.composable.LoginSignUpButton
+import com.example.toiletkorea.ui.composable.PasswordField
+import com.example.toiletkorea.ui.composable.RepeatPasswordField
+import com.example.toiletkorea.ui.theme.LoginTheme
 import com.example.toiletkorea.ui.theme.ToiletKoreaTheme
 
 @Composable
@@ -36,39 +43,17 @@ fun SignUpPage(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
-        Text(text = "Sign Up",
-            style = MaterialTheme.typography.displayLarge)
+        LoginTheme(title  = R.string.sign_up, subtitle = R.string.sign_up_to_continue)
         Spacer(modifier = Modifier.size(30.dp))
-
-        TextField(
-            value = uiState.email,
-            onValueChange = { viewModel.onEmailChange(it) },
-            label = { Text("Email") },
-            modifier = Modifier.padding(20.dp)
-        )
-        TextField(
-            value = uiState.password,
-            onValueChange = { viewModel.onPasswordChange(it) },
-            label = { Text("Password") },
-            modifier = Modifier.padding(20.dp)
-        )
-        TextField(
-            value = uiState.repeatPassword,
-            onValueChange = { viewModel.onRepeatPasswordChange(it) },
-            label = { Text("Repeat Password") },
-            maxLines = 1,
-            modifier = Modifier.padding(20.dp)
-        )
-        Spacer(modifier = Modifier.size(30.dp))
-
-        Button(onClick = {viewModel.onSignUpClick(onNextButtonClicked)},
-            modifier = Modifier.size(width = 150.dp, height = 50.dp)
-        ) {
-            Text("Sign Up",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold)
-        }
+        GeneralTextField(title = R.string.username, value = uiState.email, onNewValue = {newUsername ->  viewModel.onUsernameChange(newUsername) })
+        Spacer(modifier = Modifier.size(27.dp))
+        EmailField(value = uiState.email, onNewValue = {newEmail ->  viewModel.onEmailChange(newEmail) })
+        Spacer(modifier = Modifier.size(27.dp))
+        PasswordField(value = uiState.password, onNewValue = {newPassword ->  viewModel.onPasswordChange(newPassword) })
+        Spacer(modifier = Modifier.size(27.dp))
+        RepeatPasswordField(value = uiState.repeatPassword, onNewValue = {newRepeatPassword ->  viewModel.onRepeatPasswordChange(newRepeatPassword) })
+        Spacer(modifier = Modifier.size(58.dp))
+        LoginSignUpButton(text = R.string.sign_up, action = {viewModel.onSignUpClick(onNextButtonClicked)})
     }
 
 }
