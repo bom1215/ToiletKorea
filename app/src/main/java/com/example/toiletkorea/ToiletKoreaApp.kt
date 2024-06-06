@@ -35,16 +35,18 @@ import com.example.toiletkorea.ui.map.MapMainScreen
 import com.example.toiletkorea.model.snackbar.SnackbarManager
 import com.example.toiletkorea.ui.bars.SidebarInfo
 import com.example.toiletkorea.ui.bars.ToiletTopBar
+import com.example.toiletkorea.ui.login.ForgetPasswordPage
 import kotlinx.coroutines.CoroutineScope
 
 
 enum class ToiletScreen(@StringRes val title: Int) {
-    PermissionRequest(title = 123),
-    First(title = 111),
+    PermissionRequest(title = R.string.permission_request),
+    First(title = R.string.first_page),
     LoginMain(title = R.string.login_main_page),
     Login(title = R.string.login_page),
     SignUp(title = R.string.signUp_page),
-    Map(title = R.string.Map_page),
+    ForgotPassword(title = R.string.forgot_password_page),
+    Map(title = R.string.map_page),
 }
 
 
@@ -81,7 +83,7 @@ fun ToiletKoreaApp (
                 )
             },
             topBar = {
-                if (currentScreen != ToiletScreen.First){
+                if (currentScreen == ToiletScreen.Map){
                     ToiletTopBar(
                         drawerState = drawerState
                     )
@@ -91,7 +93,7 @@ fun ToiletKoreaApp (
             //    val uiState by viewModel.uiState.collectAsState()
             NavHost(
                 navController = navController,
-                startDestination = ToiletScreen.First.name,
+                startDestination = ToiletScreen.ForgotPassword.name,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
@@ -108,6 +110,9 @@ fun ToiletKoreaApp (
                             ToiletScreen.Map.name -> navController.navigate(ToiletScreen.Map.name)
                         }
                 })
+                }
+                composable(route = ToiletScreen.ForgotPassword.name){
+                    ForgetPasswordPage(navController = navController)
                 }
 
                 composable(route = ToiletScreen.SignUp.name) {
