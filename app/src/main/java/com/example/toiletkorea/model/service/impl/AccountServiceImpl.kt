@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import com.example.toiletkorea.R
 import com.example.toiletkorea.TAG
 import com.example.toiletkorea.model.User
@@ -13,10 +12,11 @@ import com.example.toiletkorea.ui.login.LoginUiState
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.userProfileChangeRequest
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -26,13 +26,13 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class AccountServiceImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val context: Context
-
+    private val context: Context,
 ) : AccountService {
 
     override val currentUserId: String
         get() = auth.currentUser?.uid.orEmpty()
-
+    override val currentUsername: String
+        get() = auth.currentUser?.displayName.orEmpty()
     override val hasUser: Boolean
         get() = auth.currentUser != null
 
@@ -40,11 +40,13 @@ class AccountServiceImpl @Inject constructor(
         get() = callbackFlow {
             val listener =
                 FirebaseAuth.AuthStateListener { auth ->
-                    this.trySend(auth.currentUser?.let { User(it.uid, it.isAnonymous) } ?: User())
+                    this.trySend(auth.currentUser?.let { User(it.uid, it.isAnonymous, it.displayName, it.email) } ?: User())
                 }
             auth.addAuthStateListener(listener)
             awaitClose {auth.removeAuthStateListener(listener)}
         }
+
+
 
 
     override suspend fun authenticate(email: String, password: String) {
@@ -70,6 +72,21 @@ class AccountServiceImpl @Inject constructor(
             auth.createUserWithEmailAndPassword(email, password)
         }
     }
+
+    override suspend fun updateProfile(username: String) {
+        val user: FirebaseUser = auth.currentUser!!
+        val profileUpdates = userProfileChangeRequest {
+                displayName = username
+        }
+            user.updateProfile(profileUpdates).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User profile (username) updated.")
+                }
+            }
+    }
+
+
+
     override suspend fun deleteAccount() {
         auth.currentUser!!.delete().await()
     }
@@ -80,7 +97,6 @@ class AccountServiceImpl @Inject constructor(
         Log.d(TAG, "로그아웃 전 유저 정보 ${auth.currentUser}")
         auth.signOut()
     }
-
 
     companion object {
         private const val LINK_ACCOUNT_TRACE = "linkAccount"
