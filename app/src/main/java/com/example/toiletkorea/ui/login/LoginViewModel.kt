@@ -39,6 +39,10 @@ class LoginViewModel @Inject constructor(
     private val password
         get() = uiState.value.password
 
+    fun alreadyLogIn() : Boolean {
+        return accountService.hasUser
+    }
+
     fun onEmailChange(newValue: String) {
         _uiState.value = _uiState.value.copy(email = newValue)
     }
@@ -48,7 +52,7 @@ class LoginViewModel @Inject constructor(
     }
 
 //    fun onSignInClick(openAndPopUp: (String, String) -> Unit) {
-    fun onSignInClick(onNextButtonClicked: (Any?) -> Unit) {
+    fun onSignInClick(onNextButtonClicked: () -> Unit) {
         Log.d(TAG, "로그인 처리 시작")
 
         if (!email.isValidEmail()) {
@@ -69,12 +73,10 @@ class LoginViewModel @Inject constructor(
             accountService.authenticate(email, password)
             Log.d(TAG, "로그인 처리 완료")
             try {
-                onNextButtonClicked(ToiletScreen.Map.name)
+                onNextButtonClicked()
             }catch (e: Exception){
                 Log.d(TAG, "에러 발생 $e")
             }
-//            openAndPopUp(ToiletScreen.Map.name, ToiletScreen.First.name)
-
         }
     }
 
