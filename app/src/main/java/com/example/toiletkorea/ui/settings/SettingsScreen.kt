@@ -1,4 +1,5 @@
 import android.graphics.drawable.Icon
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
@@ -26,8 +29,11 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -38,33 +44,78 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.toiletkorea.R
+import com.example.toiletkorea.TAG
+import com.example.toiletkorea.ToiletScreen
+import com.example.toiletkorea.ui.composable.HorizontalLine
+import com.example.toiletkorea.ui.settings.SettingsViewModel
 import com.example.toiletkorea.ui.theme.ToiletKoreaTheme
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
-fun SettingMainPage(modifier : Modifier = Modifier){
+fun SettingMainPage(
+    modifier : Modifier = Modifier,
+    navController: NavController
+    ){
+    val viewModel: SettingsViewModel = hiltViewModel()
+
+    val uiState by viewModel.uiState.collectAsState(initial = SettingsUiState(false))
+//    val uiState by viewModel.uiState
+    Log.d(TAG, "익명 ${uiState.isAnonymousAccount}")
+    Log.d(TAG, "유저이름 ${uiState.username}")
+
     Box(
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.primary)
-            .fillMaxWidth()
-            .height(94.dp),)
-    Column(
-        modifier = modifier.fillMaxSize().padding(top = 47.dp),
-//        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxSize()
     ) {
-        Profile(modifier = modifier.align(Alignment.CenterHorizontally))
-        Spacer(modifier = modifier.size(50.dp))
+        Box(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.onPrimary)
+                .fillMaxWidth()
+                .height(94.dp)
+                .align(Alignment.TopCenter)
+        )
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 47.dp),
+    ) {
+        Text(text = uiState.isAnonymousAccount.toString())
+        Text(text = uiState.username.toString())
+
+        Profile(modifier = Modifier.align(Alignment.CenterHorizontally))
+        Spacer(modifier = Modifier.size(50.dp))
         Settings()
-        Spacer(modifier = modifier.size(50.dp))
-        AccountSettings(modifier = modifier.padding(15.dp))
+        if (!uiState.isAnonymousAccount){
+            Spacer(modifier = Modifier.size(36.dp))
+            AccountSettings(modifier = Modifier.padding(15.dp), restartApp = {navController.navigate(ToiletScreen.LoginMain.name)})
+        }
     }
 }
 
 @Composable
 fun Profile(modifier : Modifier = Modifier){
+    val viewModel: SettingsViewModel = hiltViewModel()
+
+    val uiState by viewModel.uiState.collectAsState(initial = SettingsUiState(false))
+//    val uiState by viewModel.uiState
+
+
+    val displayName = if (uiState.isAnonymousAccount || uiState.username.isNullOrEmpty()) {
+        "Guest"
+    } else {
+        uiState.username
+    }
+    val displayEmail = if (uiState.isAnonymousAccount || uiState.email.isNullOrEmpty()) {
+        ""
+    } else {
+        uiState.email
+    }
     Column(
-        modifier = modifier.size(width = 150.dp, height = 150.dp),
+        modifier = modifier.size(width = 200.dp, height = 150.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -77,14 +128,14 @@ fun Profile(modifier : Modifier = Modifier){
         )
         Spacer(modifier = Modifier.size(4.dp))
         Text(
-            text = "name",
+            text = displayName!!,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.displayMedium
         )
         Spacer(modifier = Modifier.size(4.dp))
         Text(
-            text = "g4012s@gmail.com",
+            text = displayEmail!!,
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
             style = MaterialTheme.typography.displaySmall
@@ -99,9 +150,13 @@ fun Settings(modifier : Modifier = Modifier){
             .fillMaxWidth()
             .height(176.dp)
     ){
+        HorizontalLine()
+        Spacer(modifier.size(15.dp))
         SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.language, text = R.string.language)
         SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.notice, text = R.string.notices)
         SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.about, text = R.string.about)
+        Spacer(modifier.size(15.dp))
+        HorizontalLine()
     }
 }
 @Composable
@@ -112,13 +167,22 @@ fun SettingOption(
     Row(
         modifier = modifier
             .fillMaxSize()
-            .padding(15.dp),
+            .padding(start = 15.dp, end = 15.dp, top = 7.dp, bottom = 7.dp ),
         verticalAlignment = Alignment.CenterVertically
     ){
-        Icon(painter = painterResource(id = icon),
-            contentDescription = null,
+        Box(
             modifier = Modifier
-                .size(23.dp))
+                .clip(shape = CircleShape)
+                .size(38.4.dp)
+                .background(MaterialTheme.colorScheme.onPrimary),
+            contentAlignment = Alignment.Center
+        ){
+            Icon(painter = painterResource(id = icon),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .size(23.dp))
+        }
         Text(text = stringResource(id = text),
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
@@ -138,7 +202,9 @@ fun SettingOption(
             }
         }else{
             IconButton(onClick = { /*TODO*/ }) {
-                Icon(imageVector = Icons.AutoMirrored.Default.ArrowForward, contentDescription = null)
+                Icon(imageVector = Icons.AutoMirrored.Default.ArrowForward,
+                    contentDescription = null,
+                    tint = Color.Unspecified)
             }
         }
 
@@ -146,11 +212,21 @@ fun SettingOption(
 }
 
 @Composable
-fun AccountSettings(modifier: Modifier = Modifier){
-    Column(modifier = modifier.size(width = 139.dp, height = 58.dp),
-        verticalArrangement = Arrangement.SpaceBetween,) {
-        AccountSettingOption(icon = R.drawable.logout, text = R.string.log_out )
-        AccountSettingOption(icon = R.drawable.delete, text = R.string.delete_account )
+fun AccountSettings(modifier: Modifier = Modifier, restartApp: () -> Unit,){
+
+    val viewModel : SettingsViewModel = hiltViewModel()
+
+//    Column(modifier = modifier.size(width = 139.dp, height = 58.dp),
+//        verticalArrangement = Arrangement.SpaceBetween,) {
+//        AccountSettingOption(icon = R.drawable.logout, text = R.string.log_out, action = { viewModel.onSignOutClick(restartApp) } )
+//        AccountSettingOption(icon = R.drawable.delete, text = R.string.delete_account, action = { viewModel.onDeleteMyAccountClick(restartApp) })
+//    }
+    Column(modifier = modifier.width(139.dp),
+//        verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+        AccountSettingOption(icon = R.drawable.logout, text = R.string.log_out, action = {viewModel.onSignOutClick(restartApp)} )
+        Spacer(Modifier.size(20.dp))
+        AccountSettingOption(icon = R.drawable.delete, text = R.string.delete_account, action = {viewModel.onDeleteMyAccountClick(restartApp)})
     }
 }
 
@@ -158,9 +234,10 @@ fun AccountSettings(modifier: Modifier = Modifier){
 fun AccountSettingOption(
     modifier : Modifier = Modifier,
     @DrawableRes icon : Int,
-    @StringRes text: Int
+    @StringRes text: Int,
+    action : () -> Unit
 ){
-    IconButton(onClick = { /*TODO*/ },
+    IconButton(onClick = action,
         modifier = modifier
             .fillMaxWidth()
             .height(29.dp)) {
@@ -169,9 +246,10 @@ fun AccountSettingOption(
             .padding(5.dp),
             horizontalArrangement = Arrangement.Start){
             Icon(painter = painterResource(id = icon),
-                contentDescription = null,)
+                contentDescription = null,
+                tint = Color.Unspecified)
             Spacer(modifier = Modifier.size(10.dp))
-            Text(text = stringResource(id = text))
+            Text(text = stringResource(id = text), color = Color.Red)
         }
     }
 }
@@ -180,7 +258,12 @@ fun AccountSettingOption(
 @Composable
 fun SettingMainPagePreview(){
     ToiletKoreaTheme {
-        SettingMainPage()
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+//            color = MaterialTheme.colorScheme.background
+        ) {
+            SettingMainPage(navController = rememberNavController())
+        }
     }
 }
 
@@ -189,7 +272,7 @@ fun SettingMainPagePreview(){
 @Composable
 fun SettingAccountOptionPreview(){
     ToiletKoreaTheme {
-        AccountSettings()
+        AccountSettings(restartApp = {})
     }
 }
 
