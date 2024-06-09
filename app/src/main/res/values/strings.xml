@@ -57,5 +57,13 @@
     <string name="about">About</string>
     <string name="log_out">Log Out</string>
     <string name="delete_account">Delete Account</string>
+    <string name="setting_main">SettingMainPage</string>
+    
+    <!-- Side bar -->
+    <string name="main_page">Main Page</string>
+    <string name="settings">Settings</string>
+    <string name="share">Share</string>
+    <string name="share_url">https://github.com/bom1215/ToiletKorea.git</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
 
 </resources>
