@@ -41,6 +41,9 @@ import com.example.toiletkorea.ui.bars.Sidebar
 import com.example.toiletkorea.ui.bars.ToiletTopBar
 import com.example.toiletkorea.ui.login.ForgetPasswordPage
 import com.example.toiletkorea.ui.login.LoginViewModel
+import com.example.toiletkorea.ui.settings.AboutPage
+import com.example.toiletkorea.ui.settings.PrivacyPolicy
+import com.example.toiletkorea.ui.settings.TermsConditions
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -52,7 +55,10 @@ enum class ToiletScreen(@StringRes val title: Int) {
     SignUp(title = R.string.signUp_page),
     ForgotPassword(title = R.string.forgot_password_page),
     Map(title = R.string.map_page),
-    SettingMain(title = R.string.setting_main)
+    SettingMain(title = R.string.setting_main),
+    about(title = R.string.about_page),
+    privacy(title = R.string.privacy_policy),
+    terms(title = R.string.terms_conditions_page)
 }
 
 
@@ -133,6 +139,15 @@ fun ToiletKoreaApp (
                     }
                     composable(route = ToiletScreen.SettingMain.name){
                         SettingMainPage(navController = navController)
+                    }
+                    composable(route = ToiletScreen.about.name){
+                        AboutPage(navController = navController)
+                    }
+                    composable(route = ToiletScreen.privacy.name){
+                        PrivacyPolicy()
+                    }
+                    composable(route = ToiletScreen.terms.name){
+                        TermsConditions()
                     }
 
                     composable(route = ToiletScreen.PermissionRequest.name) {

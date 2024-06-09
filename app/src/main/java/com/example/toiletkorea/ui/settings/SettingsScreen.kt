@@ -51,6 +51,7 @@ import com.example.toiletkorea.R
 import com.example.toiletkorea.TAG
 import com.example.toiletkorea.ToiletScreen
 import com.example.toiletkorea.ui.composable.HorizontalLine
+import com.example.toiletkorea.ui.settings.AboutPage
 import com.example.toiletkorea.ui.settings.SettingsViewModel
 import com.example.toiletkorea.ui.theme.ToiletKoreaTheme
 
@@ -60,11 +61,7 @@ fun SettingMainPage(
     navController: NavController
     ){
     val viewModel: SettingsViewModel = hiltViewModel()
-
     val uiState by viewModel.uiState.collectAsState(initial = SettingsUiState(false))
-//    val uiState by viewModel.uiState
-    Log.d(TAG, "익명 ${uiState.isAnonymousAccount}")
-    Log.d(TAG, "유저이름 ${uiState.username}")
 
     Box(
         modifier = Modifier
@@ -83,12 +80,9 @@ fun SettingMainPage(
             .fillMaxSize()
             .padding(top = 47.dp),
     ) {
-        Text(text = uiState.isAnonymousAccount.toString())
-        Text(text = uiState.username.toString())
-
         Profile(modifier = Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier = Modifier.size(50.dp))
-        Settings()
+        Settings(navController = navController)
         if (!uiState.isAnonymousAccount){
             Spacer(modifier = Modifier.size(36.dp))
             AccountSettings(modifier = Modifier.padding(15.dp), restartApp = {navController.navigate(ToiletScreen.LoginMain.name)})
@@ -144,7 +138,7 @@ fun Profile(modifier : Modifier = Modifier){
     }
 
 @Composable
-fun Settings(modifier : Modifier = Modifier){
+fun Settings(modifier : Modifier = Modifier, navController: NavController){
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -152,9 +146,9 @@ fun Settings(modifier : Modifier = Modifier){
     ){
         HorizontalLine()
         Spacer(modifier.size(15.dp))
-        SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.language, text = R.string.language)
-        SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.notice, text = R.string.notices)
-        SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.about, text = R.string.about)
+        SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.language, text = R.string.language, action = {})
+        SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.notice, text = R.string.notices, action = {})
+        SettingOption(modifier = Modifier.weight(1f), icon = R.drawable.about, text = R.string.about, action = {navController.navigate(ToiletScreen.about.name)})
         Spacer(modifier.size(15.dp))
         HorizontalLine()
     }
@@ -163,11 +157,12 @@ fun Settings(modifier : Modifier = Modifier){
 fun SettingOption(
     modifier : Modifier = Modifier,
     @DrawableRes icon : Int,
-    @StringRes text: Int){
+    @StringRes text: Int,
+    action: () -> Unit){
     Row(
         modifier = modifier
-            .fillMaxSize()
-            .padding(start = 15.dp, end = 15.dp, top = 7.dp, bottom = 7.dp ),
+//            .fillMaxSize()
+            .padding(start = 15.dp, end = 15.dp, top = 7.dp, bottom = 7.dp),
         verticalAlignment = Alignment.CenterVertically
     ){
         Box(
@@ -191,7 +186,7 @@ fun SettingOption(
                 .weight(1f)
                 .padding(start = 8.dp))
         if(text == R.string.language){
-            OutlinedButton(onClick = { /*TODO*/ },
+            OutlinedButton(onClick = {},
                 modifier = Modifier,
                 shape = RectangleShape,
             ){
@@ -201,7 +196,7 @@ fun SettingOption(
                     style = MaterialTheme.typography.displaySmall)
             }
         }else{
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = action) {
                 Icon(imageVector = Icons.AutoMirrored.Default.ArrowForward,
                     contentDescription = null,
                     tint = Color.Unspecified)
@@ -287,13 +282,13 @@ fun ProfilePreview(){
 @Composable
 fun SettingPreview(){
     ToiletKoreaTheme {
-        Settings()
+        Settings(navController = rememberNavController())
     }
 }
 @Preview(showBackground = true)
 @Composable
 fun SettingOptionPreview(){
     ToiletKoreaTheme {
-        SettingOption(icon = R.drawable.language, text = R.string.language)
+        SettingOption(icon = R.drawable.language, text = R.string.language, action = {})
     }
 }
