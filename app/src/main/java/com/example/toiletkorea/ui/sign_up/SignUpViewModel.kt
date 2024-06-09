@@ -51,18 +51,15 @@ class SignUpViewModel @Inject constructor(
     fun onUsernameChange(newValue: String){
         _uiState.value = _uiState.value.copy(username = newValue)
     }
-
-  fun onEmailChange(newValue: String) {
+    fun onEmailChange(newValue: String) {
       _uiState.value = _uiState.value.copy(email = newValue)
-  }
-
-  fun onPasswordChange(newValue: String) {
+    }
+    fun onPasswordChange(newValue: String) {
       _uiState.value = _uiState.value.copy(password = newValue)
-  }
-
-  fun onRepeatPasswordChange(newValue: String) {
+    }
+    fun onRepeatPasswordChange(newValue: String) {
       _uiState.value = _uiState.value.copy(repeatPassword = newValue)
-  }
+    }
 
 //  fun onSignUpClick(openAndPopUp: (String, String) -> Unit) {
     fun onSignUpClick(onNextButtonClicked: (Any?) -> Unit) {
@@ -88,7 +85,7 @@ class SignUpViewModel @Inject constructor(
                 Log.d(TAG, "password: $password", )
 
                 accountService.createAccount(email, password)
-    //      openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
+                accountService.updateProfile(username)
                 onNextButtonClicked(ToiletScreen.Login.name)
             }catch (e: Exception){
                 Log.d(TAG, "Sign Up error", e)
