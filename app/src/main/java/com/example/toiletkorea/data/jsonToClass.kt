@@ -10,17 +10,14 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.InputStream
 
-fun jsonToDataClass(context: Context)
+fun jsonToDataClass(context: Context, resourceId: Int)
 : MutableMap<String, ToiletInfo>
 {
-    val jsonData = R.raw.toiletdata
-    val inputStream: InputStream = context.resources.openRawResource(R.raw.toiletdata)
+    val JsonData = resourceId
+    val inputStream: InputStream = context.resources.openRawResource(JsonData)
     val json = inputStream.bufferedReader().use { it.readText() }
-//    Log.d(TAG, "json: $json")
-//    Log.d(TAG, "json type: ${inputStream.bufferedReader().javaClass}")
     val type = object : TypeToken<Map<String, ToiletInfo>>() {}.type
     val toiletInfoMap: MutableMap<String, ToiletInfo> = Gson().fromJson(json, type)
-//    Log.d(TAG, "toiletInfo: ${toiletInfoMap.toString()}")
     toiletInfoMap.forEach { (key, toiletInfo) ->
         Log.d(TAG, "Key: $key, Old ToiletInfo: ${toiletInfo}")
         val lat = toiletInfo.latitude
