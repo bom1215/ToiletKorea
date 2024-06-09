@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,6 +52,7 @@ import com.example.toiletkorea.ui.theme.ToiletKoreaTheme
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
@@ -72,14 +74,18 @@ fun GoogleMapScreen(
     val startLocation = LatLng(37.528643684, 127.126365737)
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(startLocation, 10f)
+        position = CameraPosition.fromLatLngZoom(startLocation, 15f)
     }
+    val southWest = LatLng(33.241587, 125.189360) // 예: 한국의 남서쪽 경계
+    val northEast = LatLng(38.50212, 130.49490) // 예: 한국의 북동쪽 경계
+
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(
                 maxZoomPreference = 21f,
                 minZoomPreference = 5f,
-                isMyLocationEnabled = true
+                isMyLocationEnabled = true,
+                latLngBoundsForCameraTarget = LatLngBounds(southWest,northEast)
             )
         )
     }
@@ -102,7 +108,7 @@ fun GoogleMapScreen(
             val location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             location?.let {
                 // 사용자의 현재 위치를 지도의 가운데로 이동
-                val cameraPosition = CameraPosition.fromLatLngZoom(LatLng(it.latitude, it.longitude), 10f)
+                val cameraPosition = CameraPosition.fromLatLngZoom(LatLng(it.latitude, it.longitude), 15f)
                 cameraPositionState.move(CameraUpdateFactory.newCameraPosition(cameraPosition))
             }
             true
@@ -110,17 +116,36 @@ fun GoogleMapScreen(
             false
         }
     }
+    val threshold = 0.5 // 예시로 임계값 설정 (5km)
+    var lastLatitude by remember { mutableStateOf(0.0) }
+    var lastLongitude by remember { mutableStateOf(0.0) }
 
 //    var matchingToiletInfo by remember { mutableStateOf<List<DocumentSnapshot>>(emptyList()) }
 
 // LaunchedEffect는 cameraPositionState.position이 변경될 때마다 실행됩니다.
     LaunchedEffect(cameraPositionState.position) {
-        val toilets = readToiletInfoFromDB(
-            latitude = cameraPositionState.position.target.latitude,
-            longitude = cameraPositionState.position.target.longitude
-        )
-        mapViewModel.updateMatchingToiletInfo(toilets)
-        Log.d(TAG, "화장실 수 : ${mapUiState.matchingToiletInfo.size}")
+
+        val currentLatitude = cameraPositionState.position.target.latitude
+        val currentLongitude = cameraPositionState.position.target.longitude
+
+        // 현재 위치와 마지막 위치의 차이를 계산
+        val latitudeChange = Math.abs(currentLatitude - lastLatitude)
+        val longitudeChange = Math.abs(currentLongitude - lastLongitude)
+
+        // 특정 임계값 이상으로 변했을 때만 실행
+        if (latitudeChange > threshold || longitudeChange > threshold) {
+            val toilets = readToiletInfoFromDB(
+                context = context,
+                latitude = currentLatitude,
+                longitude = currentLongitude
+            )
+            mapViewModel.updateMatchingToiletInfo(toilets)
+            Log.d(TAG, "화장실 수 : ${mapUiState.matchingToiletInfo.size}")
+
+            // 마지막 위치 업데이트
+            lastLatitude = currentLatitude
+            lastLongitude = currentLongitude
+        }
     }
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
@@ -164,7 +189,7 @@ fun MapBottomSheet(
     val bottomSheetState: SheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
         onDismissRequest = { onSheetDismissed() },
-        sheetState = bottomSheetState
+        sheetState = bottomSheetState,
     ) {
         ToiletDetails(markerInfo = markerInfo)
     }
@@ -244,7 +269,7 @@ fun LocationPermissionRequest(
     }
     else if(locationPermissionsGranted){
         Log.d(TAG, "다음 화면 전환")
-        navController.navigate(ToiletScreen.Login.name)
+        navController.navigate(ToiletScreen.LoginMain.name)
     }
 
 }
@@ -381,7 +406,7 @@ fun GPSRequestPermission(activity: MainActivity) {
 @Composable
 fun MapBottomSheetPreview(){
     ToiletKoreaTheme {
-        ToiletDetails(markerInfo = tempMarkerInfo)
+//        ToiletDetails(markerInfo = tempMarkerInfo)
     }
 }
 

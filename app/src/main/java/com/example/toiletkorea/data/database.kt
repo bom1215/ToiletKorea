@@ -7,7 +7,6 @@ import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.android.play.integrity.internal.i
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
@@ -19,19 +18,46 @@ import kotlin.coroutines.resumeWithException
 
 
 fun write(context: Context){
-    val db = Firebase.firestore
-    val toiletInfoMap = jsonToDataClass(context)
-    toiletInfoMap.forEach{(key, toiletInfo) ->
-        db.collection("Seoul").document(key).set(toiletInfoMap[key]!!)
-            .addOnSuccessListener {
-                Log.d(TAG, "데이터 추가 성공")
-            }
-            .addOnFailureListener{ exception ->
-                Log.d(TAG, "데이터 추가 실패", exception)
-            }
+    val citiesEngForFirebase = listOf(
+        "Seoul", "Busan", "Daegu", "Jeollanam-do",
+        "Daejeon", "Incheon", "Ulsan", "Jeju-do", "Gyeonggi-do", "Jeollabuk-do", "Chungcheongbuk-do",
+        "Gyeongsangbuk-do", "Gangwon-do", "Gyeongsangnam-do", "Chungcheongnam-do", "Sejong-si"
+    )
+    val citiesEng = listOf(
+        "seoul", "busan", "daegu", "jeollanam_do",
+        "daejeon", "incheon", "ulsan", "jeju_do", "gyeonggi_do", "jeollabuk_do", "chungcheongbuk_do",
+        "gyeongsangbuk_do", "gangwon_do", "gyeongsangnam_do", "chungcheongnam_do", "sejong_si"
+    )
+
+    val ResourceIdList = mutableListOf<Int>()
+
+    citiesEng.forEach { city ->
+        val jsonDataResourceId = context.resources.getIdentifier(city, "raw", context.packageName)
+        ResourceIdList.add(jsonDataResourceId)
     }
 
-}
+    Log.d(TAG, ResourceIdList.toString())
+
+    for ((id: Int, city : String) in ResourceIdList.zip(citiesEngForFirebase)){
+
+        if (city =="Seoul" || city == "Incheon"){
+            continue
+        }else{
+            val db = Firebase.firestore
+            val toiletInfoMap = jsonToDataClass(context, id)
+            toiletInfoMap.forEach{(key, toiletInfo) ->
+                db.collection(city).document(key).set(toiletInfoMap[key]!!)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "데이터 추가 성공")
+                    }
+                    .addOnFailureListener{ exception ->
+                        Log.d(TAG, "데이터 추가 실패", exception)
+                    }
+            }
+        }
+        }
+    }
+
 
 fun read() {
     val db = Firebase.firestore
@@ -50,12 +76,14 @@ fun read() {
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
-suspend fun readToiletInfoFromDB(latitude : Double, longitude : Double) : MutableList<DocumentSnapshot> {
+suspend fun readToiletInfoFromDB(context: Context, latitude : Double, longitude : Double) : MutableList<DocumentSnapshot> {
     val db = Firebase.firestore
 
-    // Find cities within 50km
+    // Find cities within 5km
     val center = GeoLocation(latitude, longitude)
     val radiusInM = 5 * 1000.0
+
+    val path : String = reverseGeocode(context = context ,latitude = latitude, longitude = longitude) ?: "No matching city"
 
 // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
 // a separate query for each pair. There can be up to 9 pairs of bounds
@@ -63,7 +91,7 @@ suspend fun readToiletInfoFromDB(latitude : Double, longitude : Double) : Mutabl
     val bounds = GeoFireUtils.getGeoHashQueryBounds(center, radiusInM)
     val tasks: MutableList<Task<QuerySnapshot>> = ArrayList()
     for (b in bounds) {
-        val q = db.collection("Seoul")
+        val q = db.collection(path)
             .orderBy("geoHash")
             .startAt(b.startHash)
             .endAt(b.endHash)

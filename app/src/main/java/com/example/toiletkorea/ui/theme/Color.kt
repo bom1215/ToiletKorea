@@ -4,12 +4,15 @@ import androidx.compose.ui.graphics.Color
 
 //val md_theme_light_primary = Color(0xFFE91E63)
 val md_theme_light_primary = Color(0xFF336462)
-val md_theme_light_onPrimary = Color(0xFFFFFFFF)
-val md_theme_light_primaryContainer = Color(0xFF89F8C7)
-val md_theme_light_onPrimaryContainer = Color(0xFF002114)
-val md_theme_light_secondary = Color(0xFF4D6357)
-val md_theme_light_onSecondary = Color(0xFFFFFFFF)
-val md_theme_light_secondaryContainer = Color(0xFFCFE9D9)
+val md_theme_light_onPrimary = Color(0x33336462)
+val md_theme_light_background = Color(0xFFFFFFFF)
+val md_theme_light_primaryContainer = Color(0xFFD1DADA)
+val md_theme_light_onPrimaryContainer = Color(0xFFF8F8F8)
+val md_theme_light_secondary = Color(0xFF454545)
+val md_theme_light_onSecondary = Color(0xFF3D6B6A)
+val md_theme_light_secondaryContainer = Color(0xFFEEEEEE)
+
+
 val md_theme_light_onSecondaryContainer = Color(0xFF092016)
 val md_theme_light_tertiary = Color(0xFF3D6373)
 val md_theme_light_onTertiary = Color(0xFFFFFFFF)
@@ -21,7 +24,6 @@ val md_theme_light_onError = Color(0xFFFFFFFF)
 val md_theme_light_onErrorContainer = Color(0xFF410002)
 
 
-val md_theme_light_background = Color(0xFFFFFFFF)
 
 
 

@@ -3,6 +3,7 @@ package com.example.toiletkorea
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -13,28 +14,36 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.toiletkorea.data.jsonToDataClass
+import com.example.toiletkorea.data.reverseGeocode
+import com.example.toiletkorea.data.write
 import com.example.toiletkorea.ui.theme.ToiletKoreaTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 
-public val TAG : String = "MainActivity"
+public val TAG: String = "MainActivity"
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
             ToiletKoreaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
                 ) {
+                    val context = LocalContext.current
                     ToiletKoreaApp()
 //                    val Intent = Intent(this, EmailPasswordActivity::class.java)
 //                    startActivity(Intent)
 
-//                    val context = LocalContext.current
 //                    val filePath = context.filesDir
 //                    basicReadWrite(filePath)
 //                    practice(filePath)
@@ -47,25 +56,33 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     internal fun areLocationPermissionsAlreadyGranted(): Boolean {
         return ContextCompat.checkSelfPermission(
             this,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun openApplicationSettings() {
-        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null)).also {
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null)
+        ).also {
             startActivity(it)
         }
     }
 
-    internal fun decideCurrentPermissionStatus(locationPermissionsGranted: Boolean,
-                                               shouldShowPermissionRationale: Boolean): String {
+    internal fun decideCurrentPermissionStatus(
+        locationPermissionsGranted: Boolean,
+        shouldShowPermissionRationale: Boolean
+    ): String {
         return if (locationPermissionsGranted) "Granted"  //승인
         else if (shouldShowPermissionRationale) "Rejected"  //거절
         else "Denied" // 회피
     }
-    internal fun moveToAnotherMapAPP(newAddress : String){
+
+    internal fun moveToAnotherMapAPP(newAddress: String) {
         val location = Uri.parse("geo:0,0?q=$newAddress")
         val mapIntent = Intent(Intent.ACTION_VIEW, location)
 // Try to invoke the intent.

@@ -7,5 +7,4 @@ data class LoginUiState(
     val password : String = "",
     val username : String = "",
     val errorMessage: String? = ""
-
 )

@@ -97,6 +97,8 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
 
+    // Splash screen
+    implementation("androidx.core:core-splashscreen:1.0.0")
 
 
     // Tilt

@@ -93,6 +93,12 @@ fun LoginMainPage (
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { result ->
             result.data?.let { viewModel.handleGoogleSignInResult(result.resultCode, it) }
+            if (result.resultCode != Activity.RESULT_OK) {
+                // 구글 로그인이 실패한 경우, 추가적인 처리를 수행할 수 있습니다.
+                // 예를 들어 실패 메시지를 사용자에게 표시하거나 로그인 화면을 다시 표시할 수 있습니다.
+                return@rememberLauncherForActivityResult
+            }
+            navController.navigate(ToiletScreen.Map.name)
         })
 
 
@@ -123,18 +129,18 @@ fun LoginMainPage (
 
         val coroutineScope = rememberCoroutineScope()
 
-        SignInGoogleButton(onClick =
-        { coroutineScope.launch {
-            val signInIntentSender = viewModel.googleSignIn()
-            Log.d(TAG, "signInIntentSender: $signInIntentSender", )
-            launcher.launch(
-                IntentSenderRequest.Builder(
-                    signInIntentSender ?: return@launch
-                ).build()
-            )
-            navController.navigate(ToiletScreen.Map.name)
-        } }
-        )
+        SignInGoogleButton(onClick = {
+            coroutineScope.launch {
+                val signInIntentSender = viewModel.googleSignIn()
+                Log.d(TAG, "signInIntentSender: $signInIntentSender")
+
+                signInIntentSender?.let {
+                    launcher.launch(
+                    IntentSenderRequest.Builder(it).build()
+                    )
+                }
+            }
+        })
         Spacer(modifier = Modifier.size(30.dp))
         LoginTextButton(text = R.string.login_as_a_guest, modifier = Modifier, action ={viewModel.signInAnonymously(navController = navController)} )
     }
@@ -143,7 +149,7 @@ fun LoginMainPage (
 @Composable
 fun LoginPage(
     modifier: Modifier = Modifier,
-    onNextButtonClicked: (Any?) -> Unit,
+    navController: NavController,
     ) {
     val viewModel: LoginViewModel = hiltViewModel()
     val uiState by viewModel.uiState
@@ -151,7 +157,6 @@ fun LoginPage(
         modifier = modifier
             .fillMaxSize()
             .padding(top = 50.dp),
-//        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         LoginTheme(title  = R.string.welcome_back, subtitle = R.string.login_to_continue)
@@ -160,11 +165,12 @@ fun LoginPage(
         Spacer(modifier = Modifier.size(27.dp))
         PasswordField(value = uiState.password, onNewValue = { newPassword -> viewModel.onPasswordChange(newPassword) })
         Spacer(modifier = Modifier.size(57.dp))
-        LoginSignUpButton(text = R.string.login, modifier = Modifier, action= {viewModel.onSignInClick(onNextButtonClicked)})
+        LoginSignUpButton(text = R.string.login, modifier = Modifier, action= {viewModel.onSignInClick(
+            { navController.navigate(ToiletScreen.Map.name) })})
         Spacer(modifier = Modifier.size(7.dp))
-        ForgotPasswordButton(action = {})
+        ForgotPasswordButton(action = {navController.navigate(ToiletScreen.ForgotPassword.name)})
         Spacer(modifier = Modifier.size(44.dp))
-        RecommendSignUpButton (action = {})
+        RecommendSignUpButton (action = {navController.navigate(ToiletScreen.SignUp.name)})
     }
     }
 
@@ -173,13 +179,13 @@ fun SignInGoogleButton(onClick: () -> Unit) {
     IconButton(
         onClick = onClick,
         enabled = true,
-        modifier = Modifier.size(width = 128.dp, height = 64.dp)) {
-        Icon(
-            painter = painterResource(id = R.drawable.google_login),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            tint = Color.Unspecified,
-        )
+        modifier = Modifier.size(width = 174.dp, height = 45.dp)) {
+    Icon(
+        painter = painterResource(id = R.drawable.google_login),
+        contentDescription = null,
+        modifier = Modifier.size(width = 170.dp, height = 40.dp),
+        tint = Color.Unspecified,
+    )
     }
 }
 
@@ -195,7 +201,6 @@ fun ForgetPasswordPage(
         modifier = modifier
             .fillMaxSize()
             .padding(top = 50.dp),
-//        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         LoginTheme(title  = R.string.welcome_back, subtitle = R.string.login_to_continue)

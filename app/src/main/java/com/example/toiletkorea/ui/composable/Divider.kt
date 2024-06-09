@@ -36,3 +36,13 @@ fun HorizontalLineWithText(text: String) {
         )
     }
 }
+
+
+@Composable
+fun HorizontalLine() {
+    Divider(
+        modifier = Modifier
+            .height(1.dp),
+        color = Color.Gray
+    )
+}

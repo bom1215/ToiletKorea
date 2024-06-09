@@ -17,11 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.toiletkorea.MainActivity
 import com.example.toiletkorea.R
 import com.example.toiletkorea.TAG
 import com.example.toiletkorea.ToiletScreen
+import com.example.toiletkorea.ui.login.LoginViewModel
 import com.example.toiletkorea.ui.map.LocationPermissionRequest
 import kotlinx.coroutines.delay
 
@@ -31,6 +33,7 @@ fun FirstScreen(
     navController: NavController
 ) {
     Log.d(TAG, "첫 화면 시작")
+    val viewModel: LoginViewModel = hiltViewModel()
 
     Scaffold{Column (
         modifier = Modifier
@@ -40,24 +43,25 @@ fun FirstScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Image(
-            painterResource(id = R.drawable.main_logo),
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.size(170.dp)
-        )
+//        Image(
+//            painterResource(id = R.drawable.main_logo),
+//            contentDescription = null,
+//            contentScale = ContentScale.Fit,
+//            modifier = Modifier.size(170.dp)
+//        )
     }}
     if (activity.areLocationPermissionsAlreadyGranted()){
         LaunchedEffect(Unit) {
             delay(3000)
-            Log.d(TAG, "로그인 화면 전환")
-            navController.navigate(ToiletScreen.LoginMain.name)
+            if (viewModel.alreadyLogIn()){
+                navController.navigate(ToiletScreen.Map.name)
+            } else{
+                Log.d(TAG, "로그인 화면 전환")
+            navController.navigate(ToiletScreen.LoginMain.name) }
         }
-    }
-    else {
+    } else {
         // 백그라운드 스레드에서 위치 권한 요청을 처리합니다.
         LocationPermissionRequest(
             activity,
             navController)
-    }
-}
+}}
