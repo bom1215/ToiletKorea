@@ -45,6 +45,9 @@ fun GeneralTextField(@StringRes title: Int, value: String, onNewValue: (String) 
             value = value,
             onValueChange = { onNewValue(it) },
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
@@ -67,6 +70,9 @@ fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier =
 //            placeholder = { Text(stringResource(R.string.email)) },
             leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email") },
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
@@ -124,6 +130,9 @@ private fun PasswordField(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = visualTransformation,
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                disabledContainerColor = MaterialTheme.colorScheme.onPrimary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
