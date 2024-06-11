@@ -22,7 +22,7 @@ The app fosters community engagement to improve the accessibility and quality of
         <td align="center" width="150px">
             <a href="https://www.linkedin.com/in/pelin-akkaya"><img height="120px" width="120px" src="https://github.com/bom1215/ToiletKorea/assets/99182998/0f187e1f-0a18-4246-85e5-52274c2eddd6"/></a>
             <br/>
-            <span>UX/UI Designer</span>
+            <span>UX/UI<br />Designer</span>
             <br />
             <a href="https://www.linkedin.com/in/pelin-akkaya"><strong>Pelin Akkaya</strong></a>
             <br />
