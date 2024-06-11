@@ -10,6 +10,9 @@
     <string name="default_info_title">Default Location</string>
     <string name="default_info_snippet">No places found, because location permission is disabled.</string>
     <string name="pick_place">Choose a place</string>
+    <string name="about_page">About</string>
+    <string name="privacy_page">PrivacyPolicy</string>
+    <string name="terms_conditions_page">TermsConditions</string>
 
     <!-- Common -->
     <string name="username">Username</string>
@@ -65,5 +68,7 @@
     <string name="share">Share</string>
     <string name="share_url">https://github.com/bom1215/ToiletKorea.git</string>
     <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="privacy_policy_text">Privacy Policy</string>
+    <string name="terms_and_conditions_text">Terms and Conditions</string>
 
 </resources>
