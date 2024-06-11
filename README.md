@@ -1,6 +1,6 @@
 # ToiletKorea
 
-[showcase.mp4](..%2FDesktop%2F%C0%CC%C1%D8%B9%FC%2F%BE%C8%B5%E5%B7%CE%C0%CC%B5%E5%2Fshowcase.mp4)
+[showcase.mp4](https://github.com/bom1215/ToiletKorea/assets/99182998/9a1abbc6-d915-479e-86d1-e70511583eac)
 
 ## About 
 
