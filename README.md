@@ -13,7 +13,7 @@ The app fosters community engagement to improve the accessibility and quality of
     <tr height="160px">
         </td>
         <td align="center" width="150px">
-            <a href="https://github.com/bom1215"><img height="120px" width="120px" src="https://github.com/bom1215/ToiletKorea/assets/99182998/b3f5929a-cb6d-44a1-8949-1fab97ba1bfd"/></a>
+            <a href="https://github.com/bom1215"><img height="120px" width="120px" src="https://github.com/bom1215/ToiletKorea/assets/99182998/d9471165-4555-49e7-909e-a2cea1182967"/></a>
             <br/>
             <span>Android Developer</span>
             <a href="https://github.com/bom1215"><strong>Junbeom Lee</strong></a>
