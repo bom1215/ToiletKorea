@@ -13,12 +13,14 @@
     <string name="about_page">About</string>
     <string name="privacy_page">PrivacyPolicy</string>
     <string name="terms_conditions_page">TermsConditions</string>
+    <string name="email_sent">EmailSent</string>
+    <string name="notice">NoticePage</string>
 
     <!-- Common -->
     <string name="username">Username</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="repeat_password">Repeat password</string>
+    <string name="repeat_password">Confirm password</string>
     <string name="generic_error">Something wrong happened. Please try again.</string>
     <string name="email_error">Please insert a valid email.</string>
     <string name="cancel">Cancel</string>
@@ -47,8 +49,8 @@
     <string name="create_account">Create account</string>
     <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
     <string name="password_match_error">Passwords do not match.</string>
-    <string name="sign_up_to_continue">Sign up to continue</string>
-
+    <string name="sign_up_subtitle">Please fill in the following information</string>
+    <string name="sign_up_complete">Sign Up Successful! Please Login</string>
 
 
     <!-- Google Login -->
