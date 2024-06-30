@@ -1,8 +1,18 @@
 package com.codeJP.toiletkorea.ui.map
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.util.Log
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -16,16 +26,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.codeJP.toiletkorea.R
 import com.codeJP.toiletkorea.TAG
 import com.codeJP.toiletkorea.data.readToiletInfoFromDB
 import com.codeJP.toiletkorea.ui.theme.ToiletKoreaTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -33,10 +51,14 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 var tempMarkerInfo: DocumentSnapshot? = null
@@ -52,6 +74,8 @@ fun GoogleMapScreen(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(startLocation, 15f)
     }
+    Log.d(TAG, "zoom level : ${cameraPositionState.position.zoom}")
+
 
     // 자동으로 현재 위치로 지도 수정
     LaunchedEffect(Unit) {
@@ -68,10 +92,12 @@ fun GoogleMapScreen(
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(
-                maxZoomPreference = 21f,
-                minZoomPreference = 5f,
+                maxZoomPreference = 17f,
+                minZoomPreference = 7f,
                 isMyLocationEnabled = true,
-                latLngBoundsForCameraTarget = LatLngBounds(southWest, northEast)
+                latLngBoundsForCameraTarget = LatLngBounds(southWest, northEast),
+                mapType = MapType.TERRAIN,
+
             )
         )
     }
@@ -80,10 +106,11 @@ fun GoogleMapScreen(
             MapUiSettings(
                 mapToolbarEnabled = false,
                 myLocationButtonEnabled = true,
-                scrollGesturesEnabled = true,
+                scrollGesturesEnabled = false,
                 zoomGesturesEnabled = true,
-                compassEnabled = true
-
+                compassEnabled = true,
+                tiltGesturesEnabled = false,
+                scrollGesturesEnabledDuringRotateOrZoom = false
             )
         )
     }
@@ -96,10 +123,18 @@ fun GoogleMapScreen(
         ) {
             val fusedLocationProviderClient: FusedLocationProviderClient =
                 LocationServices.getFusedLocationProviderClient(context)
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener {
-                val cameraPosition =
-                    CameraPosition.fromLatLngZoom(LatLng(it.latitude, it.longitude), 15f)
-                cameraPositionState.move(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener {location ->
+                if (location != null){
+                    val cameraPosition =
+                        CameraPosition.fromLatLngZoom(LatLng(location.latitude, location.longitude), 15f)
+                    cameraPositionState.move(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                }else{
+                    // location이 null일 때의 처리
+                    Log.e("LocationError", "Location object is null")
+                }
+                }.addOnFailureListener { exception ->
+                // 위치 요청 실패 시의 처리
+                Log.e("LocationError", "Failed to get location", exception)
             }
             true
         } else {
@@ -142,15 +177,34 @@ fun GoogleMapScreen(
 
     Log.d(TAG, "첫번째 걸린시간: $elapsedTime")
     Log.d(TAG, "마커 시작")
-
-    val second_startTime = System.currentTimeMillis()
+    var isMapLoaded by remember { mutableStateOf(false) }
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectDragGestures{ change, dragAmount ->
+                    change.consume()
+                    val latitudeOffset =  (dragAmount.y / 10000) * (1265.06*(0.5).pow(cameraPositionState.position.zoom.toDouble()) + 0.12)
+                    val longitudeOffset = (dragAmount.x / 10000) * (1265.06*(0.5).pow(cameraPositionState.position.zoom.toDouble()) + 0.12)
+                    val latitude = cameraPositionState.position.target.latitude + latitudeOffset
+                    val longitude = cameraPositionState.position.target.longitude - longitudeOffset
+
+                    if(isMapLoaded){
+                        // Update the camera position
+                        cameraPositionState.move(
+                            CameraUpdateFactory.newLatLng(
+                                LatLng(latitude, longitude)
+                            )
+                        )
+                    }
+                }
+            },
         properties = mapProperties,
         uiSettings = mapUiSettings,
         onMyLocationButtonClick = onMyLocationButtonClick,
         cameraPositionState = cameraPositionState,
+        onMapLoaded = {isMapLoaded = true}
     ) {
         mapUiState.matchingToiletInfo.forEach { documentSnapshot ->
             val markerState = MarkerState(
@@ -169,19 +223,14 @@ fun GoogleMapScreen(
                     true
                 },
                 icon = if (mapUiState.clickedMarker?.position == markerState.position) {
-                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                    vectorToBitmap(R.drawable.selected_toilet_marker,  Color.parseColor("#FFFF0808"), context)
                 } else {
-                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                    vectorToBitmap(R.drawable.toilet_marker,  Color.parseColor("#FF336462"), context)
                 }
 
             )
         }
     }
-    val second_endTime = System.currentTimeMillis()
-    val second_elapsedTime = second_endTime - second_startTime
-
-    Log.d(TAG, "두번째 걸린시간: $second_elapsedTime")
-
     Log.d(TAG, "마커 끝")
 
     if (mapUiState.showBottomSheet) {
@@ -207,6 +256,22 @@ fun MapBottomSheet(
     ) {
         ToiletDetails(markerInfo = markerInfo)
     }
+}
+
+
+private fun vectorToBitmap(@DrawableRes id : Int, @ColorInt color : Int, context : Context): BitmapDescriptor {
+    val vectorDrawable: Drawable? = ResourcesCompat.getDrawable(context.resources, id, null)
+    if (vectorDrawable == null) {
+        Log.e(TAG, "Resource not found")
+        return BitmapDescriptorFactory.defaultMarker()
+    }
+    val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth,
+        vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
+    DrawableCompat.setTint(vectorDrawable, color)
+    vectorDrawable.draw(canvas)
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
 }
 
 @Preview(showBackground = true)
