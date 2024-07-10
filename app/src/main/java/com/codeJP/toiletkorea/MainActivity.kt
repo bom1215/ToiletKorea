@@ -13,6 +13,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.codeJP.toiletkorea.data.read
+import com.codeJP.toiletkorea.data.write
 import com.codeJP.toiletkorea.ui.theme.ToiletKoreaTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,7 +38,7 @@ class MainActivity : ComponentActivity() {
 //                    val filePath = context.filesDir
 //                    basicReadWrite(filePath)
 //                    practice(filePath)
-//                    read()
+//                    read(context)
 //                    write(context)
 //                    jsonToDataClass(context)
 //                    readToiletInfoFromDB(latitude = 37.528643684, longitude = 127.126365737)
